@@ -1,0 +1,17 @@
+{
+  "version": "v1",
+  "fecha": "2026-11-19T03:19:26",
+  "fuente": "Kaggle lainguyn123/student-performance-factors",
+  "sha256_fuente": "e8df8c4148ef83fb295ca1c092f2c6ee15272c0a8e3018b769a788ab50e96e97",
+  "sha256_train": "017b8f663de835a5120a98f897287932deccc8cde964d1f38eb3e4d6ba68fd41",
+  "sha256_test": "5e987ee408d12e0e303e7171458d4a0c97fa2c67e7c1ad8cd6c60699c4908284",
+  "filas_train": 5284,
+  "filas_test": 1322,
+  "seed": 42,
+  "cambios": [
+    "se elimina 1 fila con Exam_Score = 101",
+    "Gender fuera del modelo",
+    "imputación por moda dentro del pipeline",
+    "codificación ordinal"
+  ]
+}
