@@ -1,0 +1,22 @@
+flowchart LR
+    subgraph CD["Ciencia de datos (Jupyter)"]
+        NB["Notebook CRISP-ML(Q)<br/>fases 1 a 4"]
+    end
+    subgraph FE["frontend/ · React + Vite"]
+        UI["Aplicación web<br/>login · predicción · historial<br/>métricas · datos y reentrenamiento"]
+    end
+    subgraph BE["backend/ · FastAPI (servicio de IA)"]
+        API["API REST<br/>JWT · CORS · Swagger"]
+        ML["Módulo ML<br/>pipeline + HuberRegressor<br/>reentrenamiento y monitoreo"]
+        ART[("storage/modelos<br/>storage/datasets")]
+    end
+    DB[("SQLite<br/>usuarios · predicciones · modelos<br/>datasets · entrenamientos")]
+    CSV["Archivo CSV de entrenamiento"]
+
+    NB -- "proceso y requisitos<br/>replicados en el backend" --> ML
+    UI <-- "HTTP + JSON<br/>Bearer JWT" --> API
+    CSV -- "se sube desde la interfaz" --> UI
+    API --> ML
+    ML --> ART
+    API --> DB
+    ML --> DB

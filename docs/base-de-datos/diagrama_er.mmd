@@ -1,0 +1,88 @@
+erDiagram
+    usuarios ||--o{ datasets : "sube"
+    usuarios ||--o{ entrenamientos : "solicita"
+    usuarios ||--o{ predicciones : "registra"
+    datasets ||--o{ modelos : "entrena"
+    datasets ||--o{ entrenamientos : "usa"
+    modelos ||--o{ predicciones : "genera"
+    modelos |o--o| entrenamientos : "resulta de"
+
+    usuarios {
+        INTEGER id PK
+        TEXT usuario UK
+        TEXT nombre
+        TEXT password_hash
+        TEXT rol "admin | docente"
+        INTEGER activo
+        TEXT creado_en
+    }
+    datasets {
+        INTEGER id PK
+        TEXT nombre_archivo
+        TEXT ruta
+        TEXT sha256 UK
+        INTEGER filas
+        INTEGER filas_validas
+        TEXT origen "inicial | subido"
+        INTEGER subido_por FK
+        TEXT creado_en
+    }
+    modelos {
+        INTEGER id PK
+        TEXT version UK
+        TEXT algoritmo
+        TEXT hiperparametros "JSON"
+        TEXT ruta_archivo
+        INTEGER dataset_id FK
+        INTEGER filas_entrenamiento
+        INTEGER filas_test
+        REAL mae
+        REAL rmse
+        REAL r2
+        REAL recall_riesgo
+        REAL precision_riesgo
+        REAL mae_base
+        INTEGER cumple_requisitos
+        TEXT estado "activo | archivado | rechazado"
+        TEXT referencia "JSON para drift"
+        TEXT creado_en
+    }
+    entrenamientos {
+        INTEGER id PK
+        INTEGER solicitado_por FK
+        INTEGER dataset_id FK
+        INTEGER incluir_notas_reales
+        TEXT estado "pendiente | en_progreso | completado | fallido"
+        INTEGER modelo_id FK
+        TEXT mensaje
+        TEXT iniciado_en
+        TEXT finalizado_en
+    }
+    predicciones {
+        INTEGER id PK
+        INTEGER modelo_id FK
+        INTEGER usuario_id FK
+        TEXT codigo_estudiante
+        INTEGER hours_studied
+        INTEGER attendance
+        TEXT parental_involvement
+        TEXT access_to_resources
+        TEXT extracurricular_activities
+        INTEGER sleep_hours
+        INTEGER previous_scores
+        TEXT motivation_level
+        TEXT internet_access
+        INTEGER tutoring_sessions
+        TEXT family_income
+        TEXT teacher_quality
+        TEXT school_type
+        TEXT peer_influence
+        INTEGER physical_activity
+        TEXT learning_disabilities
+        TEXT parental_education_level
+        TEXT distance_from_home
+        REAL nota_estimada
+        INTEGER riesgo
+        REAL nota_real
+        TEXT creado_en
+    }

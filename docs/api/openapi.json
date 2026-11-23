@@ -1,0 +1,1716 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "EduPredict API",
+    "description": "\nAPI REST del sistema **EduPredict**. Estima la nota del examen final de un estudiante\n(`Exam_Score`, 0-100) a partir de sus hábitos y su entorno, y marca en **riesgo** a quien\ntenga una nota estimada menor a 65 para ofrecerle tutoría.\n\n**Cómo probarla aquí:** pulsa *Authorize*, ingresa `admin` / `admin123` (o `docente` / `docente123`)\ny luego usa cualquier endpoint.\n\n* **Docente**: predecir, ver historial, métricas y monitoreo.\n* **Administrador**: además sube archivos de entrenamiento, reentrena y activa versiones.\n",
+    "contact": {
+      "name": "Alex Jhonathan Choque Olguera"
+    },
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Iniciar sesión y obtener un token JWT",
+        "operationId": "login_api_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_login_api_auth_login_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/yo": {
+      "get": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Datos del usuario autenticado",
+        "operationId": "yo_api_auth_yo_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/predicciones": {
+      "post": {
+        "tags": [
+          "Predicciones"
+        ],
+        "summary": "Enviar los datos de un estudiante y obtener la nota estimada",
+        "operationId": "crear_prediccion_api_predicciones_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstudianteEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrediccionRespuesta"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Predicciones"
+        ],
+        "summary": "Historial de predicciones: datos enviados y resultado",
+        "operationId": "historial_api_predicciones_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pagina",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Pagina"
+            }
+          },
+          {
+            "name": "tamano",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 20,
+              "title": "Tamano"
+            }
+          },
+          {
+            "name": "riesgo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Filtrar por estudiantes en riesgo",
+              "title": "Riesgo"
+            },
+            "description": "Filtrar por estudiantes en riesgo"
+          },
+          {
+            "name": "codigo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Buscar por código de estudiante",
+              "title": "Codigo"
+            },
+            "description": "Buscar por código de estudiante"
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fecha inicial (AAAA-MM-DD)",
+              "title": "Desde"
+            },
+            "description": "Fecha inicial (AAAA-MM-DD)"
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Fecha final (AAAA-MM-DD)",
+              "title": "Hasta"
+            },
+            "description": "Fecha final (AAAA-MM-DD)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaHistorial"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/predicciones/{prediccion_id}": {
+      "get": {
+        "tags": [
+          "Predicciones"
+        ],
+        "summary": "Detalle de una predicción",
+        "operationId": "detalle_api_predicciones__prediccion_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prediccion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Prediccion Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrediccionHistorial"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/predicciones/{prediccion_id}/nota-real": {
+      "put": {
+        "tags": [
+          "Predicciones"
+        ],
+        "summary": "Registrar la nota real del examen (sirve para monitorear y reentrenar)",
+        "operationId": "registrar_nota_real_api_predicciones__prediccion_id__nota_real_put",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "prediccion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Prediccion Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotaReal"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrediccionHistorial"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/modelo/metricas": {
+      "get": {
+        "tags": [
+          "Modelo"
+        ],
+        "summary": "Métricas de rendimiento del modelo activo (test y producción)",
+        "operationId": "metricas_api_modelo_metricas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricasRespuesta"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/modelo/versiones": {
+      "get": {
+        "tags": [
+          "Modelo"
+        ],
+        "summary": "Todas las versiones del modelo",
+        "operationId": "versiones_api_modelo_versiones_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ModeloInfo"
+                  },
+                  "type": "array",
+                  "title": "Response Versiones Api Modelo Versiones Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/modelo/versiones/{modelo_id}/activar": {
+      "post": {
+        "tags": [
+          "Modelo"
+        ],
+        "summary": "Activar una versión anterior (volver atrás)",
+        "operationId": "activar_api_modelo_versiones__modelo_id__activar_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "modelo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Modelo Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModeloInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/modelo/contrato": {
+      "get": {
+        "tags": [
+          "Modelo"
+        ],
+        "summary": "Variables de entrada y valores permitidos",
+        "operationId": "contrato_api_modelo_contrato_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/modelo/monitoreo": {
+      "get": {
+        "tags": [
+          "Modelo"
+        ],
+        "summary": "Drift de los datos recibidos frente a los de entrenamiento (PSI)",
+        "operationId": "monitoreo_api_modelo_monitoreo_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/modelo/reentrenar": {
+      "post": {
+        "tags": [
+          "Modelo"
+        ],
+        "summary": "Solicitar el reentrenamiento del modelo con información actualizada",
+        "operationId": "reentrenar_api_modelo_reentrenar_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReentrenarSolicitud"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entrenamiento"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/modelo/entrenamientos": {
+      "get": {
+        "tags": [
+          "Modelo"
+        ],
+        "summary": "Historial de entrenamientos",
+        "operationId": "entrenamientos_api_modelo_entrenamientos_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Entrenamiento"
+                  },
+                  "type": "array",
+                  "title": "Response Entrenamientos Api Modelo Entrenamientos Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/modelo/entrenamientos/{entrenamiento_id}": {
+      "get": {
+        "tags": [
+          "Modelo"
+        ],
+        "summary": "Estado de un reentrenamiento",
+        "operationId": "entrenamiento_api_modelo_entrenamientos__entrenamiento_id__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "entrenamiento_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Entrenamiento Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entrenamiento"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/datasets": {
+      "get": {
+        "tags": [
+          "Datos de entrenamiento"
+        ],
+        "summary": "Archivos de entrenamiento registrados",
+        "operationId": "listar_api_datasets_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Dataset"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Api Datasets Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Datos de entrenamiento"
+        ],
+        "summary": "Enviar un archivo CSV de entrenamiento",
+        "operationId": "subir_api_datasets_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_subir_api_datasets_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetSubido"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/datasets/plantilla": {
+      "get": {
+        "tags": [
+          "Datos de entrenamiento"
+        ],
+        "summary": "Descargar una plantilla CSV con las columnas requeridas",
+        "operationId": "plantilla_api_datasets_plantilla_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
+    },
+    "/api/salud": {
+      "get": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "Estado del servicio y del modelo activo",
+        "operationId": "salud_api_salud_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_login_api_auth_login_post": {
+        "properties": {
+          "grant_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^password$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grant Type"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "title": "Password"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope",
+            "default": ""
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "client_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "format": "password",
+            "title": "Client Secret"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "Body_login_api_auth_login_post"
+      },
+      "Body_subir_api_datasets_post": {
+        "properties": {
+          "archivo": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "Archivo",
+            "description": "CSV con las 18 variables y Exam_Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "archivo"
+        ],
+        "title": "Body_subir_api_datasets_post"
+      },
+      "Dataset": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre_archivo": {
+            "type": "string",
+            "title": "Nombre Archivo"
+          },
+          "filas": {
+            "type": "integer",
+            "title": "Filas"
+          },
+          "filas_validas": {
+            "type": "integer",
+            "title": "Filas Validas"
+          },
+          "origen": {
+            "type": "string",
+            "title": "Origen"
+          },
+          "subido_por": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subido Por"
+          },
+          "creado_en": {
+            "type": "string",
+            "title": "Creado En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre_archivo",
+          "filas",
+          "filas_validas",
+          "origen",
+          "creado_en"
+        ],
+        "title": "Dataset"
+      },
+      "DatasetSubido": {
+        "properties": {
+          "dataset": {
+            "$ref": "#/components/schemas/Dataset"
+          },
+          "validacion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Validacion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dataset",
+          "validacion"
+        ],
+        "title": "DatasetSubido"
+      },
+      "Entrenamiento": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "dataset_id": {
+            "type": "integer",
+            "title": "Dataset Id"
+          },
+          "incluir_notas_reales": {
+            "type": "boolean",
+            "title": "Incluir Notas Reales"
+          },
+          "modelo_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Modelo Id"
+          },
+          "modelo_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Modelo Version"
+          },
+          "mensaje": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mensaje"
+          },
+          "solicitado_por": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solicitado Por"
+          },
+          "iniciado_en": {
+            "type": "string",
+            "title": "Iniciado En"
+          },
+          "finalizado_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finalizado En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "estado",
+          "dataset_id",
+          "incluir_notas_reales",
+          "modelo_id",
+          "modelo_version",
+          "mensaje",
+          "solicitado_por",
+          "iniciado_en",
+          "finalizado_en"
+        ],
+        "title": "Entrenamiento"
+      },
+      "EstudianteEntrada": {
+        "properties": {
+          "codigo_estudiante": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codigo Estudiante",
+            "description": "Código interno opcional (no usar nombres)"
+          },
+          "Hours_Studied": {
+            "type": "integer",
+            "maximum": 80.0,
+            "minimum": 0.0,
+            "title": "Hours Studied",
+            "description": "Horas de estudio por semana"
+          },
+          "Attendance": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Attendance",
+            "description": "Porcentaje de asistencia"
+          },
+          "Parental_Involvement": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High"
+            ],
+            "title": "Parental Involvement",
+            "description": "Participación de los padres"
+          },
+          "Access_to_Resources": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High"
+            ],
+            "title": "Access To Resources",
+            "description": "Acceso a recursos educativos"
+          },
+          "Extracurricular_Activities": {
+            "type": "string",
+            "enum": [
+              "No",
+              "Yes"
+            ],
+            "title": "Extracurricular Activities",
+            "description": "Participa en actividades extracurriculares"
+          },
+          "Sleep_Hours": {
+            "type": "integer",
+            "maximum": 16.0,
+            "minimum": 0.0,
+            "title": "Sleep Hours",
+            "description": "Horas de sueño por noche"
+          },
+          "Previous_Scores": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Previous Scores",
+            "description": "Nota en exámenes anteriores"
+          },
+          "Motivation_Level": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High"
+            ],
+            "title": "Motivation Level",
+            "description": "Nivel de motivación"
+          },
+          "Internet_Access": {
+            "type": "string",
+            "enum": [
+              "No",
+              "Yes"
+            ],
+            "title": "Internet Access",
+            "description": "Tiene acceso a internet"
+          },
+          "Tutoring_Sessions": {
+            "type": "integer",
+            "maximum": 30.0,
+            "minimum": 0.0,
+            "title": "Tutoring Sessions",
+            "description": "Sesiones de tutoría por mes"
+          },
+          "Family_Income": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High"
+            ],
+            "title": "Family Income",
+            "description": "Ingreso familiar"
+          },
+          "Teacher_Quality": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High"
+            ],
+            "title": "Teacher Quality",
+            "description": "Calidad de los docentes"
+          },
+          "School_Type": {
+            "type": "string",
+            "enum": [
+              "Public",
+              "Private"
+            ],
+            "title": "School Type",
+            "description": "Tipo de colegio"
+          },
+          "Peer_Influence": {
+            "type": "string",
+            "enum": [
+              "Negative",
+              "Neutral",
+              "Positive"
+            ],
+            "title": "Peer Influence",
+            "description": "Influencia de los compañeros"
+          },
+          "Physical_Activity": {
+            "type": "integer",
+            "maximum": 20.0,
+            "minimum": 0.0,
+            "title": "Physical Activity",
+            "description": "Horas de actividad física por semana"
+          },
+          "Learning_Disabilities": {
+            "type": "string",
+            "enum": [
+              "No",
+              "Yes"
+            ],
+            "title": "Learning Disabilities",
+            "description": "Tiene alguna dificultad de aprendizaje"
+          },
+          "Parental_Education_Level": {
+            "type": "string",
+            "enum": [
+              "High School",
+              "College",
+              "Postgraduate"
+            ],
+            "title": "Parental Education Level",
+            "description": "Nivel educativo de los padres"
+          },
+          "Distance_from_Home": {
+            "type": "string",
+            "enum": [
+              "Near",
+              "Moderate",
+              "Far"
+            ],
+            "title": "Distance From Home",
+            "description": "Distancia de casa al colegio"
+          }
+        },
+        "type": "object",
+        "required": [
+          "Hours_Studied",
+          "Attendance",
+          "Parental_Involvement",
+          "Access_to_Resources",
+          "Extracurricular_Activities",
+          "Sleep_Hours",
+          "Previous_Scores",
+          "Motivation_Level",
+          "Internet_Access",
+          "Tutoring_Sessions",
+          "Family_Income",
+          "Teacher_Quality",
+          "School_Type",
+          "Peer_Influence",
+          "Physical_Activity",
+          "Learning_Disabilities",
+          "Parental_Education_Level",
+          "Distance_from_Home"
+        ],
+        "title": "EstudianteEntrada",
+        "description": "Datos de un estudiante. Los nombres y valores son los mismos del dataset original.",
+        "example": {
+          "Access_to_Resources": "Medium",
+          "Attendance": 70,
+          "Distance_from_Home": "Far",
+          "Extracurricular_Activities": "No",
+          "Family_Income": "Low",
+          "Hours_Studied": 12,
+          "Internet_Access": "Yes",
+          "Learning_Disabilities": "No",
+          "Motivation_Level": "Low",
+          "Parental_Education_Level": "High School",
+          "Parental_Involvement": "Low",
+          "Peer_Influence": "Negative",
+          "Physical_Activity": 3,
+          "Previous_Scores": 65,
+          "School_Type": "Public",
+          "Sleep_Hours": 7,
+          "Teacher_Quality": "Medium",
+          "Tutoring_Sessions": 0,
+          "codigo_estudiante": "EST-0001"
+        }
+      },
+      "Factor": {
+        "properties": {
+          "variable": {
+            "type": "string",
+            "title": "Variable"
+          },
+          "aporte": {
+            "type": "number",
+            "title": "Aporte",
+            "description": "Puntos que suma o resta frente a un estudiante promedio"
+          }
+        },
+        "type": "object",
+        "required": [
+          "variable",
+          "aporte"
+        ],
+        "title": "Factor"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "MetricasRespuesta": {
+        "properties": {
+          "modelo": {
+            "$ref": "#/components/schemas/ModeloInfo"
+          },
+          "requisitos": {
+            "items": {
+              "$ref": "#/components/schemas/Requisito"
+            },
+            "type": "array",
+            "title": "Requisitos"
+          },
+          "produccion": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Produccion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "modelo",
+          "requisitos",
+          "produccion"
+        ],
+        "title": "MetricasRespuesta"
+      },
+      "ModeloInfo": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "algoritmo": {
+            "type": "string",
+            "title": "Algoritmo"
+          },
+          "hiperparametros": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Hiperparametros"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "cumple_requisitos": {
+            "type": "boolean",
+            "title": "Cumple Requisitos"
+          },
+          "dataset_id": {
+            "type": "integer",
+            "title": "Dataset Id"
+          },
+          "filas_entrenamiento": {
+            "type": "integer",
+            "title": "Filas Entrenamiento"
+          },
+          "filas_test": {
+            "type": "integer",
+            "title": "Filas Test"
+          },
+          "mae": {
+            "type": "number",
+            "title": "Mae"
+          },
+          "rmse": {
+            "type": "number",
+            "title": "Rmse"
+          },
+          "r2": {
+            "type": "number",
+            "title": "R2"
+          },
+          "recall_riesgo": {
+            "type": "number",
+            "title": "Recall Riesgo"
+          },
+          "precision_riesgo": {
+            "type": "number",
+            "title": "Precision Riesgo"
+          },
+          "mae_base": {
+            "type": "number",
+            "title": "Mae Base"
+          },
+          "creado_en": {
+            "type": "string",
+            "title": "Creado En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "version",
+          "algoritmo",
+          "hiperparametros",
+          "estado",
+          "cumple_requisitos",
+          "dataset_id",
+          "filas_entrenamiento",
+          "filas_test",
+          "mae",
+          "rmse",
+          "r2",
+          "recall_riesgo",
+          "precision_riesgo",
+          "mae_base",
+          "creado_en"
+        ],
+        "title": "ModeloInfo"
+      },
+      "NotaReal": {
+        "properties": {
+          "nota_real": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Nota Real",
+            "description": "Nota que el estudiante obtuvo en el examen"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nota_real"
+        ],
+        "title": "NotaReal"
+      },
+      "PaginaHistorial": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "pagina": {
+            "type": "integer",
+            "title": "Pagina"
+          },
+          "tamano": {
+            "type": "integer",
+            "title": "Tamano"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PrediccionHistorial"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "pagina",
+          "tamano",
+          "items"
+        ],
+        "title": "PaginaHistorial"
+      },
+      "PrediccionHistorial": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "creado_en": {
+            "type": "string",
+            "title": "Creado En"
+          },
+          "codigo_estudiante": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codigo Estudiante"
+          },
+          "entrada": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Entrada"
+          },
+          "nota_estimada": {
+            "type": "number",
+            "title": "Nota Estimada"
+          },
+          "riesgo": {
+            "type": "boolean",
+            "title": "Riesgo"
+          },
+          "nota_real": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nota Real"
+          },
+          "modelo_version": {
+            "type": "string",
+            "title": "Modelo Version"
+          },
+          "usuario": {
+            "type": "string",
+            "title": "Usuario"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "creado_en",
+          "codigo_estudiante",
+          "entrada",
+          "nota_estimada",
+          "riesgo",
+          "nota_real",
+          "modelo_version",
+          "usuario"
+        ],
+        "title": "PrediccionHistorial"
+      },
+      "PrediccionRespuesta": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nota_estimada": {
+            "type": "number",
+            "title": "Nota Estimada",
+            "description": "Nota estimada del examen (0-100)"
+          },
+          "riesgo": {
+            "type": "boolean",
+            "title": "Riesgo",
+            "description": "True si la nota estimada es menor a 65"
+          },
+          "umbral_riesgo": {
+            "type": "number",
+            "title": "Umbral Riesgo"
+          },
+          "modelo_version": {
+            "type": "string",
+            "title": "Modelo Version"
+          },
+          "factores_a_favor": {
+            "items": {
+              "$ref": "#/components/schemas/Factor"
+            },
+            "type": "array",
+            "title": "Factores A Favor"
+          },
+          "factores_en_contra": {
+            "items": {
+              "$ref": "#/components/schemas/Factor"
+            },
+            "type": "array",
+            "title": "Factores En Contra"
+          },
+          "advertencias": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Advertencias"
+          },
+          "creado_en": {
+            "type": "string",
+            "title": "Creado En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nota_estimada",
+          "riesgo",
+          "umbral_riesgo",
+          "modelo_version",
+          "factores_a_favor",
+          "factores_en_contra",
+          "advertencias",
+          "creado_en"
+        ],
+        "title": "PrediccionRespuesta"
+      },
+      "ReentrenarSolicitud": {
+        "properties": {
+          "dataset_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Id",
+            "description": "Dataset a usar. Si se omite, se usa el último subido"
+          },
+          "incluir_notas_reales": {
+            "type": "boolean",
+            "title": "Incluir Notas Reales",
+            "description": "Agregar las predicciones que ya tienen nota real",
+            "default": true
+          }
+        },
+        "type": "object",
+        "title": "ReentrenarSolicitud"
+      },
+      "Requisito": {
+        "properties": {
+          "metrica": {
+            "type": "string",
+            "title": "Metrica"
+          },
+          "valor": {
+            "type": "number",
+            "title": "Valor"
+          },
+          "umbral": {
+            "type": "string",
+            "title": "Umbral"
+          },
+          "cumple": {
+            "type": "boolean",
+            "title": "Cumple"
+          }
+        },
+        "type": "object",
+        "required": [
+          "metrica",
+          "valor",
+          "umbral",
+          "cumple"
+        ],
+        "title": "Requisito"
+      },
+      "Token": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "usuario": {
+            "$ref": "#/components/schemas/Usuario"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "usuario"
+        ],
+        "title": "Token"
+      },
+      "Usuario": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "usuario": {
+            "type": "string",
+            "title": "Usuario"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "rol": {
+            "type": "string",
+            "title": "Rol"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "usuario",
+          "nombre",
+          "rol"
+        ],
+        "title": "Usuario"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "OAuth2PasswordBearer": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "scopes": {},
+            "tokenUrl": "/api/auth/login"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Autenticación",
+      "description": "Inicio de sesión con JWT."
+    },
+    {
+      "name": "Predicciones",
+      "description": "Enviar datos al modelo y consultar el historial."
+    },
+    {
+      "name": "Modelo",
+      "description": "Métricas, versiones, monitoreo y reentrenamiento."
+    },
+    {
+      "name": "Datos de entrenamiento",
+      "description": "Subir y listar archivos CSV de entrenamiento."
+    },
+    {
+      "name": "Sistema",
+      "description": "Estado del servicio."
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Servidor local"
+    }
+  ]
+}
