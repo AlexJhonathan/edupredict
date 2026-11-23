@@ -1,0 +1,130 @@
+{
+  "campos": {
+    "Hours_Studied": {
+      "tipo": "int",
+      "min_entrenamiento": 1,
+      "max_entrenamiento": 44
+    },
+    "Attendance": {
+      "tipo": "int",
+      "min_entrenamiento": 60,
+      "max_entrenamiento": 100
+    },
+    "Sleep_Hours": {
+      "tipo": "int",
+      "min_entrenamiento": 4,
+      "max_entrenamiento": 10
+    },
+    "Previous_Scores": {
+      "tipo": "int",
+      "min_entrenamiento": 50,
+      "max_entrenamiento": 100
+    },
+    "Tutoring_Sessions": {
+      "tipo": "int",
+      "min_entrenamiento": 0,
+      "max_entrenamiento": 8
+    },
+    "Physical_Activity": {
+      "tipo": "int",
+      "min_entrenamiento": 0,
+      "max_entrenamiento": 6
+    },
+    "Parental_Involvement": {
+      "tipo": "str",
+      "valores": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    },
+    "Access_to_Resources": {
+      "tipo": "str",
+      "valores": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    },
+    "Motivation_Level": {
+      "tipo": "str",
+      "valores": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    },
+    "Family_Income": {
+      "tipo": "str",
+      "valores": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    },
+    "Teacher_Quality": {
+      "tipo": "str",
+      "valores": [
+        "Low",
+        "Medium",
+        "High"
+      ]
+    },
+    "Peer_Influence": {
+      "tipo": "str",
+      "valores": [
+        "Negative",
+        "Neutral",
+        "Positive"
+      ]
+    },
+    "Parental_Education_Level": {
+      "tipo": "str",
+      "valores": [
+        "High School",
+        "College",
+        "Postgraduate"
+      ]
+    },
+    "Distance_from_Home": {
+      "tipo": "str",
+      "valores": [
+        "Near",
+        "Moderate",
+        "Far"
+      ]
+    },
+    "Extracurricular_Activities": {
+      "tipo": "str",
+      "valores": [
+        "No",
+        "Yes"
+      ]
+    },
+    "Internet_Access": {
+      "tipo": "str",
+      "valores": [
+        "No",
+        "Yes"
+      ]
+    },
+    "School_Type": {
+      "tipo": "str",
+      "valores": [
+        "Private",
+        "Public"
+      ]
+    },
+    "Learning_Disabilities": {
+      "tipo": "str",
+      "valores": [
+        "No",
+        "Yes"
+      ]
+    }
+  },
+  "salida": {
+    "nota_estimada": "float (0-100)",
+    "riesgo": "bool (nota_estimada < 65)"
+  }
+}
